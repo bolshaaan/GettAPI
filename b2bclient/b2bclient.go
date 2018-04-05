@@ -9,10 +9,13 @@ import (
 	"net/http"
 	"net/url"
 	"time"
+
+	"gopkg.in/yaml.v2"
 )
 
 const (
-	BaseURL string = "https://api.gett.com/"
+	//BaseURL string = "https://api.gett.com/"
+	BaseURL string = "https://publicapi-scrum12.gtforge.com/"
 	//BaseURL        string = "https://rides.gett.com/api/"
 	//BaseURL string = "http://localhost:8087/"
 
@@ -30,13 +33,37 @@ const (
 const testHeaders = false
 
 type B2bClient struct {
-	ClientID     string
-	ClientSecret string
-	GrantType    string
-	Scope        string
-	AuthData     *AuthResp
+	ClientID     string   `yaml:"client_id"`
+	ClientSecret string   `yaml:"client_secret"`
+	GrantType    string   `yaml:"grant_type"`
+	Scope        string   `yaml:"scope"`
+	BusinessIDs  []string `yaml:"business_ids"`
 
-	aToken string
+	AuthData *AuthResp
+	aToken   string
+}
+
+func LoadB2bClientFromFile(confFileName string) (*B2bClient, error) {
+	cl := &B2bClient{}
+	b, err := ioutil.ReadFile(confFileName)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := yaml.Unmarshal(b, cl); err != nil {
+		return nil, err
+	}
+
+	isExpired, err := cl.LoadAuth()
+	if !isExpired && err == nil {
+		return cl, nil
+	}
+
+	if err := cl.Auth(); err != nil {
+		return nil, err
+	}
+
+	return cl, nil
 }
 
 func NewB2bClient(clientID, cSecret, gType, scope string) (*B2bClient, error) {
@@ -59,9 +86,39 @@ func NewB2bClient(clientID, cSecret, gType, scope string) (*B2bClient, error) {
 	return cl, nil
 }
 
-func (c *B2bClient) GetProducts() error {
+func (c *B2bClient) GetProducts(bID string, lat, lon float64) (*GetProductsResp, error) {
+	vals := make(url.Values)
+	vals.Add("business_id", bID)
+	vals.Add("latitude", fmt.Sprintf("%f", lat))
+	vals.Add("longitude", fmt.Sprintf("%f", lon))
 
-	return nil
+	req, err := http.NewRequest("GET", BaseURL+GetProductsPath+"?"+vals.Encode(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header = http.Header{}
+	req.Header.Add("Authorization", "Bearer "+c.AuthData.AccessToken)
+
+	cl := &http.Client{}
+	resp, err := cl.Do(req)
+	if err != nil {
+		return nil, nil
+	}
+
+	defer resp.Body.Close()
+	buf, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	prodResp := &GetProductsResp{}
+	if err := json.Unmarshal(buf, prodResp); err != nil {
+		testPrintOut(bytes.NewReader(buf))
+		return nil, err
+	}
+
+	return prodResp, nil
 }
 
 func (c *B2bClient) CreateRide(rr *RideRequest, bID string) error {

@@ -64,3 +64,11 @@ type CreateRideResponse struct {
 	RequestedAt time.Time `json:"requested_at"`
 	ScheduledAt time.Time `json:"scheduled_at"`
 }
+
+type GetProductsResp struct {
+	Products []struct {
+		ID          string `json:"id"`
+		DisplayName string `json:"display_name"`
+		ImageURL    string `json:"image_url"`
+	} `json:"products"`
+}
