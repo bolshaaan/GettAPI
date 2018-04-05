@@ -12,17 +12,21 @@ func testCall() {
 	//cl, err := b2bclient.NewB2bClient("003caed893af3b44ba8f5986f9ac7272930444636d11eb5c8eff9085871ede98",
 	//	"f9b944c49b1988c8c0f133799eefd442bca4b3e45e66b1c33f53d3bf12c95cfb", "client_credentials", "business")
 
-	cl, err := b2bclient.LoadB2bClientFromFile("config/scrum12.yml")
+	cl, err := b2bclient.LoadB2bClientFromFile("config/prod.yml")
 	if err != nil {
 		panic(err)
 	}
 
-	prodRes, err := cl.GetProducts(cl.BusinessIDs[0], 55.724086, 37.653638)
+	businessID := cl.BusinessIDs[0]
+	fmt.Println("BusinessID: ", businessID)
+
+	prodRes, err := cl.GetProducts(businessID, 55.724086, 37.653638)
 	if err != nil {
 		panic(err)
 	}
 
-	productID := prodRes.Products[0].ID
+	productID := prodRes.Products[3].ID
+	fmt.Println("productID: ", productID)
 
 	//fmt.Println("TOKEN: ", cl.AuthData.AccessToken)
 	// create ride
@@ -50,7 +54,7 @@ func testCall() {
 
 	// RU-1999 -- prod
 	// RU-7631 -- scrum50
-	if err := cl.CreateRide(rr, cl.BusinessIDs[0]); err != nil {
+	if err := cl.CreateRide(rr, businessID); err != nil {
 		panic(err)
 	}
 

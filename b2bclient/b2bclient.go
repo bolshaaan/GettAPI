@@ -15,7 +15,7 @@ import (
 
 const (
 	//BaseURL string = "https://api.gett.com/"
-	BaseURL string = "https://publicapi-scrum12.gtforge.com/"
+	//BaseURL string = "https://publicapi-scrum12.gtforge.com/"
 	//BaseURL        string = "https://rides.gett.com/api/"
 	//BaseURL string = "http://localhost:8087/"
 
@@ -38,6 +38,7 @@ type B2bClient struct {
 	GrantType    string   `yaml:"grant_type"`
 	Scope        string   `yaml:"scope"`
 	BusinessIDs  []string `yaml:"business_ids"`
+	BaseURL      string   `yaml:"base_url"`
 
 	AuthData *AuthResp
 	aToken   string
@@ -92,7 +93,7 @@ func (c *B2bClient) GetProducts(bID string, lat, lon float64) (*GetProductsResp,
 	vals.Add("latitude", fmt.Sprintf("%f", lat))
 	vals.Add("longitude", fmt.Sprintf("%f", lon))
 
-	req, err := http.NewRequest("GET", BaseURL+GetProductsPath+"?"+vals.Encode(), nil)
+	req, err := http.NewRequest("GET", c.BaseURL+GetProductsPath+"?"+vals.Encode(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -127,7 +128,7 @@ func (c *B2bClient) CreateRide(rr *RideRequest, bID string) error {
 		return err
 	}
 
-	req, err := http.NewRequest("POST", BaseURL+CreateRidePath+"?business_id="+bID, bytes.NewReader(b))
+	req, err := http.NewRequest("POST", c.BaseURL+CreateRidePath+"?business_id="+bID, bytes.NewReader(b))
 	if err != nil {
 		return err
 	}
@@ -180,7 +181,7 @@ func (c *B2bClient) Auth() error {
 	urlValues.Add("grant_type", c.GrantType)
 	urlValues.Add("scope", "business")
 
-	resp, err := http.PostForm(BaseURL+AuthURL, urlValues)
+	resp, err := http.PostForm(c.BaseURL+AuthURL, urlValues)
 	if err != nil {
 		return err
 	}
