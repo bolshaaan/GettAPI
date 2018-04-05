@@ -4,8 +4,8 @@ import "time"
 
 type AuthResp struct {
 	AccessToken string `json:"access_token"`
-	CreatedAt   int    `json:"created_at"`
-	ExpiresIn   int    `json:"expires_in"`
+	CreatedAt   int64  `json:"created_at"`
+	ExpiresIn   int64  `json:"expires_in"`
 	Scope       string `json:"scope"`
 	TokenType   string `json:"token_type"`
 }

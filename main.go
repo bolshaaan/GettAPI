@@ -7,18 +7,7 @@ import (
 	"github.com/bolshaaan/testb2brides/b2bclient"
 )
 
-//curl -F 'client_id=003caed893af3b44ba8f5986f9ac7272930444636d11eb5c8eff9085871ede98' \
-//-F 'client_secret=f9b944c49b1988c8c0f133799eefd442bca4b3e45e66b1c33f53d3bf12c95cfb' \
-//-F 'grant_type=client_credentials' \
-//-F 'scope=business' \
-//'https://api.gett.com/v1/oauth/token'
-func main() {
-	// auth
-
-	// scrum50
-	//cl, err := b2bclient.NewB2bClient("529c8c3d3ad9e0c90e795446b2d7c0cf55b3b29af29720cc6001183117008162",
-	//	"f64d376a0ff156efa4aef290e30c7e5db4af391e327565b314420f6c7ef93bf2", "client_credentials", "business")
-
+func testCall() {
 	// prod
 	cl, err := b2bclient.NewB2bClient("003caed893af3b44ba8f5986f9ac7272930444636d11eb5c8eff9085871ede98",
 		"f9b944c49b1988c8c0f133799eefd442bca4b3e45e66b1c33f53d3bf12c95cfb", "client_credentials", "business")
@@ -57,6 +46,23 @@ func main() {
 	}
 
 	fmt.Println("TIME: ", time.Since(start))
+}
+
+//curl -F 'client_id=003caed893af3b44ba8f5986f9ac7272930444636d11eb5c8eff9085871ede98' \
+//-F 'client_secret=f9b944c49b1988c8c0f133799eefd442bca4b3e45e66b1c33f53d3bf12c95cfb' \
+//-F 'grant_type=client_credentials' \
+//-F 'scope=business' \
+//'https://api.gett.com/v1/oauth/token'
+func main() {
+	// auth
+
+	// scrum50
+	//cl, err := b2bclient.NewB2bClient("529c8c3d3ad9e0c90e795446b2d7c0cf55b3b29af29720cc6001183117008162",
+	//	"f64d376a0ff156efa4aef290e30c7e5db4af391e327565b314420f6c7ef93bf2", "client_credentials", "business")
+
+	for i := 0; i < 10; i++ {
+		testCall()
+	}
 
 	return
 }

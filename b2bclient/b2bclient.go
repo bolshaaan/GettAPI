@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"time"
 )
 
 const (
@@ -45,6 +46,13 @@ func NewB2bClient(clientID, cSecret, gType, scope string) (*B2bClient, error) {
 
 	// DEBUG
 	//cl.AuthData = &AuthResp{AccessToken: "AAA"}
+
+	isExpired, err := cl.LoadAuth()
+
+	if !isExpired && err == nil {
+		return cl, nil
+	}
+
 	if err := cl.Auth(); err != nil {
 		return nil, err
 	}
@@ -94,14 +102,18 @@ func (c *B2bClient) CreateRide(rr *RideRequest, bID string) error {
 	return nil
 }
 
-func (c *B2bClient) LoadAuth() error {
+func (c *B2bClient) LoadAuth() (bool, error) {
+	c.AuthData = &AuthResp{}
 
-	return nil
+	if err := readGob(TokenDataPath, c.AuthData); err != nil {
+		return true, err
+	}
+
+	return c.IsAuthExpired(), nil
 }
 
-func (c *B2bClient) CheckAuthExpired() error {
-
-	return nil
+func (c *B2bClient) IsAuthExpired() bool {
+	return c.AuthData.CreatedAt+c.AuthData.ExpiresIn < time.Now().Unix()
 }
 
 func (c *B2bClient) Auth() error {
@@ -130,7 +142,9 @@ func (c *B2bClient) Auth() error {
 		testPrintOut(bytes.NewReader(buf))
 	}
 
-	//writeGob(TokenDataPath)
+	if err := writeGob(TokenDataPath, c.AuthData.AccessToken); err != nil {
+		return err
+	}
 
 	return nil
 }
