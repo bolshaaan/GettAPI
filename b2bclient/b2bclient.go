@@ -21,6 +21,7 @@ const (
 
 	//CreateRidePath string = "v1/rides"
 	CreateRidePath string = "v1/business/rides"
+	GetRidePath    string = "v1/business/rides"
 
 	//CreateRidePath string = "v1/business/rides"
 
@@ -122,15 +123,39 @@ func (c *B2bClient) GetProducts(bID string, lat, lon float64) (*GetProductsResp,
 	return prodResp, nil
 }
 
-func (c *B2bClient) CreateRide(rr *RideRequest, bID string) error {
+func (c *B2bClient) GetRideDetails(rideID, bID string) (*GetRideDetailResponse, error) {
+	params := make(url.Values)
+	params.Add("business_id", bID)
+
+	fmt.Println(rideID)
+	req, err := http.NewRequest("GET", c.BaseURL+GetRidePath+"/"+rideID+"?"+params.Encode(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header = http.Header{}
+	req.Header.Add("Authorization", "Bearer "+c.AuthData.AccessToken)
+
+	cl := &http.Client{}
+	resp, err := cl.Do(req)
+	if err != nil {
+		return nil, nil
+	}
+
+	testPrintOut(resp.Body)
+
+	return nil, nil
+}
+
+func (c *B2bClient) CreateRide(rr *RideRequest, bID string) (*RideRequestResponse, error) {
 	b, err := json.Marshal(rr)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	req, err := http.NewRequest("POST", c.BaseURL+CreateRidePath+"?business_id="+bID, bytes.NewReader(b))
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	req.Header.Add("Authorization", "Bearer "+c.AuthData.AccessToken)
@@ -146,18 +171,23 @@ func (c *B2bClient) CreateRide(rr *RideRequest, bID string) error {
 	resp, err := cl.Do(req)
 	//resp, err := http.Post(BaseURL+CreateRidePath, "application/json", bytes.NewReader(b))
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	defer resp.Body.Close()
 	buf, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	testPrintOut(bytes.NewReader(buf))
+	respRide := &RideRequestResponse{}
+	if err := json.Unmarshal(buf, respRide); err != nil {
+		return nil, err
+	}
 
-	return nil
+	//testPrintOut(bytes.NewReader(buf))
+
+	return respRide, nil
 }
 
 func (c *B2bClient) LoadAuth() (bool, error) {

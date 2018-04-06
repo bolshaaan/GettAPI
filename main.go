@@ -54,9 +54,12 @@ func testCall() {
 
 	// RU-1999 -- prod
 	// RU-7631 -- scrum50
-	if err := cl.CreateRide(rr, businessID); err != nil {
+	resp, err := cl.CreateRide(rr, businessID)
+	if err != nil {
 		panic(err)
 	}
+
+	cl.GetRideDetails(resp.RideID, businessID)
 
 	fmt.Println("TIME: ", time.Since(start))
 }

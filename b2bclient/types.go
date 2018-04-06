@@ -72,3 +72,89 @@ type GetProductsResp struct {
 		ImageURL    string `json:"image_url"`
 	} `json:"products"`
 }
+
+type GetRideDetailResponse struct {
+	RideID    string `json:"ride_id"`
+	ProductID string `json:"product_id"`
+	Status    string `json:"status"`
+	Rider     struct {
+		Name        string `json:"name"`
+		PhoneNumber string `json:"phone_number"`
+		ImageURL    string `json:"image_url"`
+	} `json:"rider"`
+	Driver struct {
+		Name        string  `json:"name"`
+		PhoneNumber string  `json:"phone_number"`
+		ImageURL    string  `json:"image_url"`
+		Rating      float64 `json:"rating"`
+		Vehicle     struct {
+			Model        string `json:"model"`
+			Color        string `json:"color"`
+			LicensePlate string `json:"license_plate"`
+		} `json:"vehicle"`
+		Location struct {
+			Latitude  float64 `json:"latitude"`
+			Longitude float64 `json:"longitude"`
+		} `json:"location"`
+	} `json:"driver"`
+	Pickup struct {
+		Latitude  float64 `json:"latitude"`
+		Longitude float64 `json:"longitude"`
+		Address   string  `json:"address"`
+	} `json:"pickup"`
+	Destination struct {
+		Latitude  float64 `json:"latitude"`
+		Longitude float64 `json:"longitude"`
+		Address   string  `json:"address"`
+	} `json:"destination"`
+	Dropoff struct {
+		Latitude  float64 `json:"latitude"`
+		Longitude float64 `json:"longitude"`
+		Address   string  `json:"address"`
+	} `json:"dropoff"`
+	NoteToDriver string `json:"note_to_driver"`
+	Reference    string `json:"reference"`
+	StopPoints   []struct {
+		Name        string  `json:"name"`
+		PhoneNumber string  `json:"phone_number"`
+		Latitude    float64 `json:"latitude"`
+		Longitude   float64 `json:"longitude"`
+		Address     string  `json:"address"`
+	} `json:"stop_points"`
+	RequestedAt  time.Time `json:"requested_at"`
+	ScheduledAt  time.Time `json:"scheduled_at"`
+	WillArriveAt time.Time `json:"will_arrive_at"`
+	PickedupAt   time.Time `json:"pickedup_at"`
+	DroppedoffAt time.Time `json:"droppedoff_at"`
+}
+
+type RideRequestResponse struct {
+	RideID    string `json:"ride_id"`
+	ProductID string `json:"product_id"`
+	Status    string `json:"status"`
+	Rider     struct {
+		Name        string `json:"name"`
+		PhoneNumber string `json:"phone_number"`
+		ImageURL    string `json:"image_url"`
+	} `json:"rider"`
+	Pickup struct {
+		Latitude  float64 `json:"latitude"`
+		Longitude float64 `json:"longitude"`
+		Address   string  `json:"address"`
+	} `json:"pickup"`
+	Destination struct {
+		Latitude  float64 `json:"latitude"`
+		Longitude float64 `json:"longitude"`
+		Address   string  `json:"address"`
+	} `json:"destination"`
+	NoteToDriver string `json:"note_to_driver"`
+	Reference    string `json:"reference"`
+	StopPoints   []struct {
+		Name      string  `json:"name"`
+		Latitude  float64 `json:"latitude"`
+		Longitude float64 `json:"longitude"`
+		Address   string  `json:"address"`
+	} `json:"stop_points"`
+	RequestedAt time.Time `json:"requested_at"`
+	ScheduledAt time.Time `json:"scheduled_at"`
+}
