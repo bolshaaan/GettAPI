@@ -1,11 +1,14 @@
-client_id: 4f8916cd58cd87aa0e52da563bf34d9ecb2d155ac752df7ac9046f0377227177
-client_secret: 67209a9d15b06ffe98296cd19f00066dfb27172702a4bd11da655f3c157cfaa9
-api_key: 70c8d09c87aa7bc70bafd22ba28cc4e5925a6f251c20bda9d80b61fabf8397d6
+client_id: 98b6f0bbb1dc4ae21e038378ab79c14e92bdb742857ccab288dbd6213de5c2b2
+client_secret: bf8045ce4ef7052602f4c63229013f41c55021315491be1b8214eafb740a93eb
+api_key:
 grant_type: client_credentials
+#base_url: https://publicapi-scrum12.gtforge.com/
+base_url: http://localhost:8088/
 scopes:
 - public
 - business
 business_ids:
+- "RU-12669"
 - "RU-3357"
 - "RU-3933"
 - "RU-7754"

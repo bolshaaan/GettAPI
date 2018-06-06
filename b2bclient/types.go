@@ -27,11 +27,13 @@ type Destination struct {
 }
 
 type RideRequest struct {
-	ProductID    string      `json:"product_id"`
-	Rider        Rider       `json:"rider"`
-	Pickup       Pickup      `json:"pickup"`
-	Destination  Destination `json:"destination"`
-	NoteToDriver string      `json:"note_to_driver"`
+	ProductID    string                 `json:"product_id"`
+	Rider        Rider                  `json:"rider"`
+	Pickup       Pickup                 `json:"pickup"`
+	Destination  Destination            `json:"destination"`
+	NoteToDriver string                 `json:"note_to_driver"`
+	ExtraFields  map[string]interface{} `json:"company_extra_fields"`
+	PaymentType  string                 `json:"payment_type"`
 }
 
 type CreateRideResponse struct {
@@ -155,6 +157,6 @@ type RideRequestResponse struct {
 		Longitude float64 `json:"longitude"`
 		Address   string  `json:"address"`
 	} `json:"stop_points"`
-	RequestedAt time.Time `json:"requested_at"`
+	//RequestedAt time.Time `json:"requested_at,omitempty"`
 	ScheduledAt time.Time `json:"scheduled_at"`
 }

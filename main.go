@@ -4,32 +4,58 @@ import (
 	"fmt"
 	"time"
 
+	"os"
+
+	"regexp"
+
 	"github.com/bolshaaan/testb2brides/b2bclient"
 )
+
+import _ "github.com/motemen/go-loghttp/global"
 
 func testCall() {
 	// prod
 	//cl, err := b2bclient.NewB2bClient("003caed893af3b44ba8f5986f9ac7272930444636d11eb5c8eff9085871ede98",
 	//	"f9b944c49b1988c8c0f133799eefd442bca4b3e45e66b1c33f53d3bf12c95cfb", "client_credentials", "business")
 
+	//cl, err := b2bclient.LoadB2bClientFromFile("config/scrum51_ru12319.yml")
 	cl, err := b2bclient.LoadB2bClientFromFile("config/prod.yml")
 	if err != nil {
 		panic(err)
 	}
-
+	//
 	businessID := cl.BusinessIDs[0]
 	fmt.Println("BusinessID: ", businessID)
+	//
+	//cl.GetRideDetails("183202874", businessID)
+	//os.Exit(0)
+
+	cl.BaseURL += "sandbox/" // testing sendbox
+
+	fmt.Println(cl.GetRideDetails("1753873348", businessID))
+	os.Exit(0)
 
 	prodRes, err := cl.GetProducts(businessID, 55.724086, 37.653638)
 	if err != nil {
 		panic(err)
 	}
 
-	productID := prodRes.Products[3].ID
-	fmt.Println("productID: ", productID)
+	productID := prodRes.Products[0].ID
+	for _, v := range prodRes.Products {
+		if matched, _ := regexp.MatchString("Эконом", v.DisplayName); matched {
+			fmt.Println("Found: ", v.DisplayName)
+			fmt.Println(v)
+			productID = v.ID
+			break
+		}
+	}
+	//
+	//productID = "163eb7f7-8c1f-4509-8de6-5a04f657331c"
 
-	//fmt.Println("TOKEN: ", cl.AuthData.AccessToken)
-	// create ride
+	productID = "6d89725f-f4a1-4fba-9952-a33e836fb78f"
+	fmt.Println("productID: ", productID)
+	fmt.Println("TOKEN: ", cl.AuthData.AccessToken)
+	//create ride
 
 	start := time.Now()
 
@@ -46,6 +72,16 @@ func testCall() {
 			Latitude:  55.724086,
 			Longitude: 37.653638,
 		},
+		//Pickup: b2bclient.Pickup{
+		//	Latitude:  57.724086,
+		//	Longitude: 37.653638,
+		//},
+		PaymentType: "voucher",
+		//ExtraFields: map[string]interface{}{
+		//	"Smoking Malboro": "Yes, please, more Malboro",
+		//	//"company_field_#363": "Yes, please",
+		//	//"company_field_#364": "Only Nikes :)",
+		//},
 		//Destination: b2bclient.Destination{
 		//	Latitude:  55.724086 + 1,
 		//	Longitude: 37.653638 + 1,
@@ -58,6 +94,8 @@ func testCall() {
 	if err != nil {
 		panic(err)
 	}
+
+	os.Exit(0)
 
 	cl.GetRideDetails(resp.RideID, businessID)
 
@@ -76,9 +114,8 @@ func main() {
 	//cl, err := b2bclient.NewB2bClient("529c8c3d3ad9e0c90e795446b2d7c0cf55b3b29af29720cc6001183117008162",
 	//	"f64d376a0ff156efa4aef290e30c7e5db4af391e327565b314420f6c7ef93bf2", "client_credentials", "business")
 
-	testCall()
-
 	//for i := 0; i < 10; i++ {
+	testCall()
 	//}
 
 	return
